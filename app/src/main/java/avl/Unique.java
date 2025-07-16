@@ -9,6 +9,9 @@ public class Unique {
     /** Main program: prints the number of unique lines in a given file by one
      * of two methods */
     public static void main(String[] args) {
+        args = new String[2];
+        args[0] = "avl";
+        args[1] = "C:/Users/melis/Desktop/coursework/western courses/year one/a2-Sonnysboy/app/prefixes_small.txt";
         if (args.length != 2) {
           System.out.println("Requires 2 arguments: naive or avl and a filename.");
           return;
@@ -51,8 +54,9 @@ public class Unique {
 
     /** Return the number of unique lines availble to be read by sc */ 
     private static int avlUnique(Scanner sc) {
-      // TODO - implement this; its runtime should be O(n log n)
-      return 0; // placeholder, so code compiles
+        AVL a = new AVL();
+        while (sc.hasNextLine()) a.avlInsert(sc.nextLine());
+      return a.getSize();
     }
 
 

@@ -237,6 +237,19 @@ public class AVLTest {
   }
 
   @Test
+  public void testInsertionEdgeCase() {
+    AVL a = new AVL();
+    a.bstInsert("a");
+    a.bstInsert("x");
+    a.bstInsert("v");
+    a.bstInsert("z");
+    a.bstInsert("y");
+    assertEquals("a v x y z", inOrder(a.root));
+    assertEquals("a x v z y", preOrder(a.root));
+    assertEquals("v y z x a", postOrder(a.root));
+  }
+
+  @Test
   /** Test rightRotate on the root of a two-node tree */
   public void test40rightRotate() {
     AVL a = new AVL();
