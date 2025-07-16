@@ -30,28 +30,7 @@ public class AVL {
             return search(n.right, w);
         }
     }
-    private void bstInsert(Node n, String w) {
-        if (n.left == null && n.right == null) {
-            if (lt(w, n.word)) {
-                n.left = new Node(w, n);
-            } else {
-                n.right = new Node(w, n);
-            }
-        } else if (n.left == null) {
-            if (lt(w, n.word)) {
-                n.left = new Node(w, n);
-            } else {
-                bstInsert(n.right, w);
-            }
-        } else {
-            if (lt(w, n.word)) {
-                bstInsert(n.left, w);
-            } else {
-                n.right = new Node(w, n);
-            }
-        }
-        n.height = 1 + Math.max(h(n.left), h(n.right));
-    }
+
     /**
      * insert w into the tree as a standard BST, ignoring balance
      */
@@ -66,27 +45,27 @@ public class AVL {
         bstInsert(root, w);
     }
 
-//    private void bstInsert(Node n, String w) {
-//        if (lt(w, n.word)) {
-//            if (n.left == null) {
-//                n.left = new Node(w, n);
-//            } else {
-//                bstInsert(n.left, w);
-//            }
-//        } else if (gt(w, n.word)) {
-//            if (n.right == null) {
-//                n.right = new Node(w, n);
-//            } else {
-//                bstInsert(n.right, w);
-//            }
-//        }
-//        n.height = h(n);
-//    }
+    private void bstInsert(Node n, String w) {
+        if (lt(w, n.word)) {
+            if (n.left == null) {
+                n.left = new Node(w, n);
+            } else {
+                bstInsert(n.left, w);
+            }
+        } else if (gt(w, n.word)) {
+            if (n.right == null) {
+                n.right = new Node(w, n);
+            } else {
+                bstInsert(n.right, w);
+            }
+        }
+        n.height = h(n);
+    }
 
 
     private int h(Node n) {
         if (n == null) return -1;
-        return 1 + Math.max(h(n.left), h(n.right));
+        return n.height;
     }
 
     // for my sanity
@@ -104,6 +83,7 @@ public class AVL {
      * performed by this method.
      */
     public void avlInsert(String w) {
+        if (search(w) != null) return;
         avlInsert(root, w);
         ++size;
     }
@@ -118,10 +98,11 @@ public class AVL {
         if (lt(w, n.word)) {
             if (n.left != null) avlInsert(n.left, w);
             else n.left = new Node(w, n);
-        } else if (gt(w, n.word)){
+        } else if (gt(w, n.word)) {
             if (n.right != null) avlInsert(n.right, w);
             else n.right = new Node(w, n);
         }
+        n.height = 1 + Math.max(h(n.left), h(n.right));
         rebalance(n);
     }
 
@@ -147,8 +128,8 @@ public class AVL {
         y.left = x;
         x.parent = y;
 
-        y.height = h(y);
-        x.height = h(x);
+        x.height = 1 + Math.max(h(x.left), h(x.right));
+        y.height = 1 + Math.max(h(y.left), h(y.right));
     }
 
     /**
@@ -176,16 +157,19 @@ public class AVL {
 
         y.parent = x;
 
-        y.height = h(y);
-        x.height = h(x);
+        y.height = 1 + Math.max(h(y.left), h(y.right));
+
+        x.height = 1 + Math.max(h(x.left), h(x.right));
+
     }
+
 
     /**
      * rebalance a node N after a potentially AVL-violoting insertion.
      * precondition: none of n's descendants violates the AVL property
      */
     public void rebalance(Node node) {
-        node.height = h(node);
+        node.height = 1 + Math.max(node.left == null ? -1 : node.left.height, node.right == null ? -1 : node.right.height);
         int b = bf(node);
         if (b > 1 && bf(node.left) >= 0) {
             rightRotate(node);
